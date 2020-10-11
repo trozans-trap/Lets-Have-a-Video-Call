@@ -1,3 +1,4 @@
+const socket = io('/');
 const videoGrid = document.getElementById('video-grid');
 console.log(videoGrid);
 const myVideo = document.createElement('video');
@@ -11,6 +12,16 @@ navigator.mediaDevices.getUserMedia({
     myVideoStram = stream;
     addVideoStream(myVideo, stream);
 })
+
+socket.emit('join-room', roomId);
+
+socket.on('user-connected',()=>{
+    connecToNewUser();
+})
+
+const connecToNewUser = ()=>{
+    
+}
 
 const addVideoStream = (video, stream) => {
     video.srcObject = stream;
