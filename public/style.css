@@ -40,8 +40,12 @@ video {
 
 .main_chat_window{
    flex-grow: 1;
-   overflow-y: scroll;
+   overflow-y: auto;
 }
+
+.main_chat_window::-webkit-scrollbar {
+    display: none;
+  }
 
 .main_message_container{
     padding: 22px 12px;
@@ -104,5 +108,9 @@ video {
 }
 
 .unmute{
+    color: #eb534B; 
+}
+
+.stop{
     color: #eb534B; 
 }
