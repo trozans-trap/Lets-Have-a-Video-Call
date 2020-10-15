@@ -13,6 +13,10 @@ app.use(express.static('public'));
 
 app.use('/peerjs', peerServer);
 
+app.get('/home',(req,res)=>{
+    res.render('home');
+})
+
 app.get('/',(req,res)=>{
     res.redirect(`/${uuidv4()}`);
 })
