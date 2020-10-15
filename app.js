@@ -7,19 +7,23 @@ const { ExpressPeerServer } = require('peer');
 const peerServer = ExpressPeerServer(server,{
     debug: true
 });
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }))
+ 
+// parse application/json
+app.use(bodyParser.json())
+
+const mainRouter= require('./routes/signup');
 
 app.set('view engine','ejs')
 app.use(express.static('public'));
 
 app.use('/peerjs', peerServer);
 
-app.get('/home',(req,res)=>{
-    res.render('home');
-})
 
-app.get('/signup',(req,res)=>{
-    res.render('signup');
-})
+app.use('/', mainRouter);
+
+
 
 app.get('/',(req,res)=>{
     res.redirect(`/${uuidv4()}`);
