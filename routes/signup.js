@@ -14,4 +14,16 @@ router.get('/signup',(req,res)=>{
 
 router.post('/signup', loginController.postSignup);
 
+router.get('/dashb',(req,res)=>{
+    res.render('dashboard');
+});
+
+router.post('/join',(req,res)=>{
+    let link = req.body.link;
+    console.log(link);
+    res.redirect(link);
+});
+
+
+
 module.exports = router;
