@@ -14,12 +14,16 @@ router.get('/signup',(req,res)=>{
 
 router.post('/signup', loginController.postSignup);
 
-router.get('/dashb',(req,res)=>{
+router.get('/dashboard',(req,res)=>{
     res.render('dashboard');
 });
 
 router.post('/join',(req,res)=>{
     let link = req.body.link;
+    let s = link.split("/");
+    if(s.length>1 && s[0]=='http:'){
+        link = s[s.length -1];
+    }
     console.log(link);
     res.redirect(link);
 });

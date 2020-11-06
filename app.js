@@ -7,11 +7,21 @@ const { ExpressPeerServer } = require('peer');
 const peerServer = ExpressPeerServer(server,{
     debug: true
 });
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }))
  
 // parse application/json
 app.use(bodyParser.json())
+
+//Db config
+const db = require('./config/keys').MongoURI;
+
+//Connect to Mongo
+mongoose.connect(db, { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false })
+    .then(() => console.log('MongoDb Connected...'))
+    .catch(err => console.log(err));
+
 
 const mainRouter= require('./routes/signup');
 
