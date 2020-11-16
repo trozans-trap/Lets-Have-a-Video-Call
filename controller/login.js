@@ -1,48 +1,43 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
+const authenticate = require('../authenticate');
 
 
-exports.postLogin = async (req, res) => {
+exports.postLogin = passport.authenticate('local'), async (req, res) => {
     let { email, password } = req.body;
-    await User.findOne({ email: email})
-      .then((user) => {
-        if (user) {
-            bcrypt.compare(password, user.password, (err, isMatch) => {
-                if (err)
-                    throw err;
-                if (isMatch) {
-                    res.send('success');
-                }
-                else {
+    var token = authenticate.getToken({_id: req.user._id});
+    
+    // await User.findOne({ email: email})
+    //   .then((user) => {
+    //     if (user) {
+    //         bcrypt.compare(password, user.password, (err, isMatch) => {
+    //             if (err)
+    //                 throw err;
+    //             if (isMatch) {
+    //                 res.send('success');
+    //             }
+    //             else {
                    
-                }
-            });
-        } else {
+    //             }
+    //         });
+    //     } else {
 
-        }
-    })
+    //     }
+    // })
+    res.send('sucess');
 }
 
 
 exports.postSignup = async (req, res) => {
-    let {
-        name,
-        number,
-        email,
-        password
-    } = req.body;
+    let { name, number, email, password } = req.body;
     await User.findOne({ email: email })
       .then(async (guest) => {
         console.log("guest",guest);
         if (guest) {
-          res.send("user e  xist")
+          res.send("user   exist")
         } else {
-            const newUser = new User({
-                name,
-                number,
-                email,
-                password
-            });
+            const newUser = new User({ name, number, email, password });
 
             //Hash Password
             bcrypt.genSalt(10, (err, salt) => {
@@ -54,7 +49,10 @@ exports.postSignup = async (req, res) => {
                     newUser.password = hash;
                     //save User
                     await newUser.save().then((user) => {
-                        res.send(user);
+                        console.log(user);
+                        passport.authenticate('local')(req, res, () => {
+                            res.send(user);
+                          });
                     }).catch(err => res.status(500).json(err));
                 });
             });
