@@ -12,7 +12,8 @@ const peerServer = ExpressPeerServer(server, {
     debug: true
 });
 const logger = require('morgan');
-
+const session = require('express-session');
+const passport = require('passport');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
@@ -22,7 +23,9 @@ app.use(bodyParser.json())
 
 //Db config
 const db = require('./config/keys').MongoURI;
-
+//Passport config
+const{ passsport , ensureAuthenticated } = require('./authenticate')
+// require('./authenticate')(passport);
 //Connect to Mongo
 mongoose.connect(db, {
         useUnifiedTopology: true,
@@ -40,6 +43,15 @@ app.set('view engine', 'ejs')
 app.use(express.static('public'));
 app.use(logger('dev'));
 app.use(express.json());
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true,
+  }));
+
+//Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/peerjs', peerServer);
 
@@ -48,11 +60,11 @@ app.use('/', mainRouter);
 
 
 
-app.get('/', (req, res) => {
+app.get('/', ensureAuthenticated,(req, res) => {
     res.redirect(`/${uuidv4()}`);
 })
 
-app.get('/:room', (req, res) => {
+app.get('/:room',ensureAuthenticated ,(req, res) => {
     res.render('room', {
         roomId: req.params.room
     })

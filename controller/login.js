@@ -1,24 +1,25 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
+const authenticate = require('../authenticate');
 
+exports.postLogin = async (req, res,next) => {
+    let { email, password } = req.body;
 
-exports.postLogin = async (req, res) => {
-    let {
-        email,
-        password
-    } = req.body;
-    // var token = authenticate.getToken({_id: req.user._id});
-
-    await User.findOne({
-            email: email
-        })
+    await User.findOne({ email: email })
         .then((user) => {
             if (user) {
                 bcrypt.compare(password, user.password, (err, isMatch) => {
+                  // console.log("in match",err,isMatch)
                     if (err)
                         console.log(err);
                     if (isMatch) {
-                        res.send('success');
+                        passport.authenticate('local',{
+                            successRedirect: '/dashboard',
+                            failureRedirect: '/home',
+                            // failureFlash: true
+                        })(req, res, next);
+                        // res.send('success');
                     } else {
 
                     }
@@ -63,7 +64,7 @@ exports.postSignup = async (req, res) => {
                         newUser.password = hash;
                         //save User
                         await newUser.save().then((user) => {
-                            res.send(user)
+                            res.redirect('/home')
                         }).catch(err =>
                             res.status(500).json(err));
                     });
