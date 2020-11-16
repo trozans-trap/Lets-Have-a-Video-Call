@@ -29,7 +29,7 @@ router.post('/join',ensureAuthenticated ,(req,res)=>{
     res.redirect(link);
 });
 
-router.post('/logout',ensureAuthenticated,(req,res)=>{
+router.get('/logout',(req,res)=>{
     req.logout();
     // req.flash('success_msg','You are logged out')
     res.redirect('/home');

@@ -26,6 +26,7 @@ const db = require('./config/keys').MongoURI;
 //Passport config
 const{ passsport , ensureAuthenticated } = require('./authenticate')
 // require('./authenticate')(passport);
+passsport(passport);
 //Connect to Mongo
 mongoose.connect(db, {
         useUnifiedTopology: true,
