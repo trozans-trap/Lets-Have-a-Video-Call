@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
-const authenticate = require('../authenticate');
+
 const loginController = require('../controller/login');
 
 router.get('/home',(req,res)=>{
@@ -16,11 +15,11 @@ router.get('/signup',(req,res)=>{
 
 router.post('/signup', loginController.postSignup);
 
-router.get('/dashboard',passport.authenticate('local'),(req,res)=>{
+router.get('/dashboard',(req,res)=>{
     res.render('dashboard');
 });
 
-router.post('/join',passport.authenticate('local'), (req,res)=>{
+router.post('/join', (req,res)=>{
     let link = req.body.link;
     let s = link.split("/");
     if(s.length>1 && s[0]=='http:'){

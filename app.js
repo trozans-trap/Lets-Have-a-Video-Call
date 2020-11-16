@@ -12,10 +12,7 @@ const peerServer = ExpressPeerServer(server, {
     debug: true
 });
 const logger = require('morgan');
-const session = require('express-session');
-const FileStore = require('session-file-store')(session);
-const passport = require('passport');
-const authenticate = require('./authenticate');
+
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
@@ -43,16 +40,6 @@ app.set('view engine', 'ejs')
 app.use(express.static('public'));
 app.use(logger('dev'));
 app.use(express.json());
-app.use(session({
-    name: 'session-id',
-    secret: '12345-67890-09876-54321',
-    saveUninitialized: false,
-    resave: false,
-    store: new FileStore()
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use('/peerjs', peerServer);
 

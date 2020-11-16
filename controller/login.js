@@ -1,61 +1,73 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
-const passport = require('passport');
-const authenticate = require('../authenticate');
 
 
-exports.postLogin = passport.authenticate('local'), async (req, res) => {
-    let { email, password } = req.body;
-    var token = authenticate.getToken({_id: req.user._id});
-    
-    // await User.findOne({ email: email})
-    //   .then((user) => {
-    //     if (user) {
-    //         bcrypt.compare(password, user.password, (err, isMatch) => {
-    //             if (err)
-    //                 throw err;
-    //             if (isMatch) {
-    //                 res.send('success');
-    //             }
-    //             else {
-                   
-    //             }
-    //         });
-    //     } else {
+exports.postLogin = async (req, res) => {
+    let {
+        email,
+        password
+    } = req.body;
+    // var token = authenticate.getToken({_id: req.user._id});
 
-    //     }
-    // })
-    res.send('sucess');
+    await User.findOne({
+            email: email
+        })
+        .then((user) => {
+            if (user) {
+                bcrypt.compare(password, user.password, (err, isMatch) => {
+                    if (err)
+                        console.log(err);
+                    if (isMatch) {
+                        res.send('success');
+                    } else {
+
+                    }
+                });
+            } else {
+
+            }
+        })
+    // res.send('sucess');
 }
 
 
 exports.postSignup = async (req, res) => {
-    let { name, number, email, password } = req.body;
-    await User.findOne({ email: email })
-      .then(async (guest) => {
-        console.log("guest",guest);
-        if (guest) {
-          res.send("user   exist")
-        } else {
-            const newUser = new User({ name, number, email, password });
-
-            //Hash Password
-            bcrypt.genSalt(10, (err, salt) => {
-                bcrypt.hash(newUser.password, salt, async(err, hash) => {
-                    if (err) {
-
-                    }
-                    //Set password to hashed
-                    newUser.password = hash;
-                    //save User
-                    await newUser.save().then((user) => {
-                        console.log(user);
-                        passport.authenticate('local')(req, res, () => {
-                            res.send(user);
-                          });
-                    }).catch(err => res.status(500).json(err));
+    let {
+        name,
+        number,
+        email,
+        password
+    } = req.body;
+    await User.findOne({
+            email: email
+        })
+        .then(async (guest) => {
+            console.log("guest", guest);
+            if (guest) {
+                res.send("user   exist")
+            } else {
+                const newUser = new User({
+                    name,
+                    number,
+                    email,
+                    password
                 });
-            });
-        }
-    }).catch(err => res.status(500).json(err));
+
+                //Hash Password
+                bcrypt.genSalt(10, (err, salt) => {
+                    bcrypt.hash(newUser.password, salt, async (err, hash) => {
+                        if (err) {
+
+                        }
+                        //Set password to hashed
+                        newUser.password = hash;
+                        //save User
+                        await newUser.save().then((user) => {
+                            res.send(user)
+                        }).catch(err =>
+                            res.status(500).json(err));
+                    });
+                });
+            }
+        }).catch(err => res.status(500).json(err));
 }
